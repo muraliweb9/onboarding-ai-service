@@ -1,13 +1,11 @@
-package com.ai.natwest.onboarding.ai;
+package com.natwest.onboarding.ai;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class OnboardingAiServiceApplicationTests {
+class OnboardingAiServiceApplicationTest {
 
-	@Test
-	void contextLoads() {
-	}
-
+    @Test
+    void contextLoads() {}
 }
