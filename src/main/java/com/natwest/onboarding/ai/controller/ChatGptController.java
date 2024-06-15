@@ -1,13 +1,14 @@
 package com.natwest.onboarding.ai.controller;
 
+import com.natwest.onboarding.ai.config.ChatGptConnectionConfig;
+import com.natwest.onboarding.ai.model.ClientRequest;
 import com.natwest.onboarding.ai.model.Message;
 import com.natwest.onboarding.ai.model.Request;
 import com.natwest.onboarding.ai.model.Response;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,28 +18,21 @@ public class ChatGptController {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Value("${openai.model}")
-    private String model;
-
-    @Value("${openai.max-completions}")
-    private int maxCompletions;
-
-    @Value("${openai.temperature}")
-    private double temperature;
-
-    @Value("${openai.max_tokens}")
-    private int maxTokens;
-
-    @Value("${openai.api.url}")
-    private String apiUrl;
+    @Autowired
+    private ChatGptConnectionConfig chatGptConnectionConfig;
 
     @PostMapping("/chat")
-    public Response chat(@RequestParam("prompt") String prompt) {
+    public Response chat(@RequestBody ClientRequest req) {
 
-        Request request =
-                new Request(model, List.of(new Message("user", prompt)), maxCompletions, temperature, maxTokens);
+        Request request = new Request(
+                chatGptConnectionConfig.getModel(),
+                List.of(new Message("user", req.getPrompt())),
+                chatGptConnectionConfig.getMaxCompletions(),
+                chatGptConnectionConfig.getTemperature(),
+                chatGptConnectionConfig.getMaxTokens());
 
-        Response response = restTemplate.postForObject(apiUrl, request, Response.class);
+        Response response = restTemplate.postForObject(
+                chatGptConnectionConfig.getApiConfig().getUrl(), request, Response.class);
         return response;
     }
 }

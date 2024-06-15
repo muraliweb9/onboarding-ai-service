@@ -1,0 +1,19 @@
+spring:
+    application:
+        name: onboarding-ai-service
+logging:
+    level:
+        root: DEBUG
+
+data:
+    source:
+        ai:
+            chatgpt:
+                api-config:
+                    key: [MASKED]
+                    url: https://api.openai.com/v1/chat/completions
+                max-completions: 1
+                max-tokens: 100
+                model: gpt-4o
+                temperature: 0
+
