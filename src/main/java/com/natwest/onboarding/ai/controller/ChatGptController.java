@@ -1,10 +1,7 @@
 package com.natwest.onboarding.ai.controller;
 
 import com.natwest.onboarding.ai.config.ChatGptConnectionConfig;
-import com.natwest.onboarding.ai.model.ClientRequest;
-import com.natwest.onboarding.ai.model.Message;
-import com.natwest.onboarding.ai.model.Request;
-import com.natwest.onboarding.ai.model.Response;
+import com.natwest.onboarding.ai.model.*;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +18,7 @@ public class ChatGptController {
     @Autowired
     private ChatGptConnectionConfig chatGptConnectionConfig;
 
-    @PostMapping("/chat")
+    @PostMapping("/prompt")
     public Response chat(@RequestBody ClientRequest req) {
 
         Request request = new Request(
@@ -30,6 +27,21 @@ public class ChatGptController {
                 chatGptConnectionConfig.getMaxCompletions(),
                 chatGptConnectionConfig.getTemperature(),
                 chatGptConnectionConfig.getMaxTokens());
+
+        Response response = restTemplate.postForObject(
+                chatGptConnectionConfig.getApiConfig().getUrl(), request, Response.class);
+        return response;
+    }
+
+    @PostMapping("/detailed-prompt")
+    public Response chat(@RequestBody ClientDetailedRequest req) {
+
+        Request request = new Request(
+                req.getModel(),
+                List.of(new Message("user", req.getPrompt())),
+                req.getMaxCompletions(),
+                req.getTemperature(),
+                req.getMaxTokens());
 
         Response response = restTemplate.postForObject(
                 chatGptConnectionConfig.getApiConfig().getUrl(), request, Response.class);
